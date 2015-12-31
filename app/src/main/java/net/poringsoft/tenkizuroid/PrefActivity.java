@@ -1,16 +1,10 @@
 package net.poringsoft.tenkizuroid;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
 
 /**
+ * 設定画面
  * Created by MRY on 2015/12/29.
  */
 public class PrefActivity extends PreferenceActivity {

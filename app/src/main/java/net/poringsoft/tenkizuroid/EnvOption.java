@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 /**
+ * アプリ全体で使用する環境設定取得クラス
  * Created by MRY on 2015/12/31.
  */
 public class EnvOption {

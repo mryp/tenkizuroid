@@ -14,23 +14,36 @@ import android.preference.PreferenceScreen;
  * Created by MRY on 2015/12/31.
  */
 public class PrefFragment extends PreferenceFragment {
+    /**
+     * コンストラクタ
+     */
     public PrefFragment() {
     }
 
+    /**
+     * 生成時処理
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref);
     }
 
+    /**
+     * 画面表示時処理
+     * @param savedInstanceState
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
     }
 
+    /**
+     * 表示内容の初期設定
+     */
     private void initView() {
-
         //バージョン情報セット
         PreferenceScreen versionScreen = (PreferenceScreen)this.findPreference("version_info");
         if (versionScreen != null) {

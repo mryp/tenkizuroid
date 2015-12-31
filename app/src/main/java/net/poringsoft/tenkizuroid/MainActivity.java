@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -39,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
     //メソッド
     //------------------------------------------------------------------------
+
     /**
      * 画面起動時処理
+     *
      * @param savedInstanceState
      */
     @Override
@@ -91,12 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 画面戻りイベント
+     *
      * @param requestCode 呼び出し元（この画面で指定）コード
-     * @param resultCode 呼び出された側の結果コード
-     * @param data インテント
+     * @param resultCode  呼び出された側の結果コード
+     * @param data        インテント
      */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         PSDebug.d("requestCode=" + requestCode + " resultCode=" + resultCode);
         if (requestCode == REQ_CODE_PREF) {
             m_task = new TenkizuManagerTask();
@@ -111,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 実処理タスク
+         *
          * @param params
          * @return
          */
@@ -122,31 +127,28 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 処理完了後処理（UIスレッド）
+         *
          * @param result
          */
         @Override
         protected void onPostExecute(List<TenkizuInfo> result) {
-            if (result == null)
-            {
+            if (result == null) {
                 PSUtils.toast(getApplicationContext(), "データリストの取得に失敗しました");
                 return;
             }
-            if (result.size() < INDEX_LATEST)
-            {
+            if (result.size() < INDEX_LATEST) {
                 PSUtils.toast(getApplicationContext(), "データリストが壊れています");
                 return;
             }
 
-            for (TenkizuInfo info : result)
-            {
-                PSDebug.d(info.toString());
-            }
             m_sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), result);
             m_viewPager.setAdapter(m_sectionsPagerAdapter);
             m_viewPager.setCurrentItem(result.size() - INDEX_LATEST, true);   //最新のデータを取得する
-            m_viewPager.invalidate();   //再描画
+            m_viewPager.getAdapter().notifyDataSetChanged();
         }
-    };
+    }
+
+    ;
 
     /**
      * 内部画面フラグメント
@@ -174,10 +176,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            String imageUrl = getArguments().getString(ARG_IMAGE_URL);
+            PSDebug.d("call imageUrl=" + imageUrl);
+
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             ImageView tenkizuImage = (ImageView) rootView.findViewById(R.id.mainImageView);
             if (tenkizuImage != null) {
-                ImageLoader.getInstance().displayImage(getArguments().getString(ARG_IMAGE_URL), tenkizuImage);
+                ImageLoader.getInstance().displayImage(imageUrl, tenkizuImage);
             }
             return rootView;
         }
@@ -186,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * フラグメント切り替え用アダプター
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         private List<TenkizuInfo> m_tenkizuList;
 
         public SectionsPagerAdapter(FragmentManager fm, List<TenkizuInfo> tenkizuList) {
@@ -197,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            PSDebug.d("call position=" + position);
             return PlaceholderFragment.newInstance(m_tenkizuList.get(position));
         }
 
@@ -209,6 +215,11 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             String title = m_tenkizuList.get(position).getTitle();
             return title;
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 }

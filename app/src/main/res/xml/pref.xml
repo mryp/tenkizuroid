@@ -3,7 +3,7 @@
     <PreferenceCategory android:title="表示設定">
         <CheckBoxPreference
             android:title="カラー天気図を使用する"
-            android:summary="チェックONにするとカラー天気図を表示する（再起動で有効）"
+            android:summary="チェックON時はカラー天気図を表示する"
             android:key="view_show_color"
             android:defaultValue="true" />
     </PreferenceCategory>
