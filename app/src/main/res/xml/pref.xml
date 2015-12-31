@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="表示設定">
+        <CheckBoxPreference
+            android:title="カラー天気図を使用する"
+            android:summary="チェックONにするとカラー天気図を表示する（再起動で有効）"
+            android:key="view_show_color"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="バージョン情報">
+        <PreferenceScreen
+            android:title="version X.X.X"
+            android:summary="Copyright (C) 2015 PORING SOFT"
+            android:key="version_info" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="データ参照">
+        <PreferenceScreen
+            android:title="気象庁 - 天気図"
+            android:summary="オリジナルデータの天気図を参照する"
+            android:key="ref_original">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="@string/url_jma_original" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:title="気象庁 - 天気図について"
+            android:summary="天気図の読み方を参照する"
+            android:key="ref_reading">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="@string/url_jma_reading" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

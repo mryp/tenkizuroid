@@ -1,5 +1,6 @@
 package net.poringsoft.tenkizuroid;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,12 +28,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     //定数
     //------------------------------------------------------------------------
-
+    private static final int REQ_CODE_PREF = 1;         //設定画面から
+    private final static int INDEX_LATEST = 3;  //最新データの位置
 
     //フィールド
     //------------------------------------------------------------------------
     private SectionsPagerAdapter m_sectionsPagerAdapter;
-    private ViewPager m_vViewPager;
+    private ViewPager m_viewPager;
+    private TenkizuManagerTask m_task;
 
     //メソッド
     //------------------------------------------------------------------------
@@ -49,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        m_vViewPager = (ViewPager) findViewById(R.id.container);
-        TenkizuUrlTask.execute();
+        m_viewPager = (ViewPager) findViewById(R.id.container);
+        m_task = new TenkizuManagerTask();
+        m_task.execute();
     }
 
     /**
@@ -69,20 +73,57 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            startSetting();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private AsyncTask<Void, Void, List<TenkizuInfo>> TenkizuUrlTask = new AsyncTask<Void, Void, List<TenkizuInfo>>() {
+    /**
+     * 設定画面へ遷移する
+     */
+    private void startSetting() {
+        Intent intent = new Intent(this, PrefActivity.class);
+        this.startActivityForResult(intent, REQ_CODE_PREF);
+    }
 
+
+    /**
+     * 画面戻りイベント
+     * @param requestCode 呼び出し元（この画面で指定）コード
+     * @param resultCode 呼び出された側の結果コード
+     * @param data インテント
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        PSDebug.d("requestCode=" + requestCode + " resultCode=" + resultCode);
+        if (requestCode == REQ_CODE_PREF) {
+            m_task = new TenkizuManagerTask();
+            m_task.execute();
+        }
+    }
+
+    /**
+     * 表示する天気図のURLリストを取得するタスク
+     */
+    private class TenkizuManagerTask extends AsyncTask<Void, Void, List<TenkizuInfo>> {
+
+        /**
+         * 実処理タスク
+         * @param params
+         * @return
+         */
         @Override
         protected List<TenkizuInfo> doInBackground(Void... params) {
             TenkizuManager manager = new TenkizuManager();
-            return manager.getTenkizuInfoList(true, true);
+            return manager.getTenkizuInfoList(EnvOption.getViewShowColor(getApplicationContext()), true);
         }
 
+        /**
+         * 処理完了後処理（UIスレッド）
+         * @param result
+         */
         @Override
         protected void onPostExecute(List<TenkizuInfo> result) {
             if (result == null)
@@ -90,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 PSUtils.toast(getApplicationContext(), "データリストの取得に失敗しました");
                 return;
             }
-            if (result.size() < 3)
+            if (result.size() < INDEX_LATEST)
             {
                 PSUtils.toast(getApplicationContext(), "データリストが壊れています");
                 return;
@@ -101,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
                 PSDebug.d(info.toString());
             }
             m_sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), result);
-            m_vViewPager.setAdapter(m_sectionsPagerAdapter);
-            m_vViewPager.setCurrentItem(result.size() - 3, true);   //最新のデータを取得する
+            m_viewPager.setAdapter(m_sectionsPagerAdapter);
+            m_viewPager.setCurrentItem(result.size() - INDEX_LATEST, true);   //最新のデータを取得する
+            m_viewPager.invalidate();   //再描画
         }
     };
 

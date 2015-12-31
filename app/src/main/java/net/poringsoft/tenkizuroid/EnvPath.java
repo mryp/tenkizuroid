@@ -15,7 +15,7 @@ public class EnvPath {
     //定数
     //---------------------------------------------------------
     private static final String NAME_NOMEDIA_FILE = ".nomedia";    //画像非表示用ファイル
-    private static final String NAME_MAIN_DIR = "timesignal";       //メインフォルダ名
+    private static final String NAME_MAIN_DIR = "tenkizuroid";     //メインフォルダ名
 
 
     //フィールド

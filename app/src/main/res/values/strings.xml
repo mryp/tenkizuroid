@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">天気図ロイド2</string>
     <string name="action_settings">設定</string>
+    <string name="url_poringsoft">http://www.poringsoft.net/</string>
+    <string name="url_jma_original">http://www.jma.go.jp/jp/g3/</string>
+    <string name="url_jma_reading">http://www.jma.go.jp/jma/kishou/know/kurashi/sokuhou_kaisetu.html</string>
+
 </resources>
